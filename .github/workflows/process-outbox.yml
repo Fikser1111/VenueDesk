@@ -1,0 +1,18 @@
+name: Process Notification Outbox
+
+on:
+  schedule:
+    - cron: "*/5 * * * *" # hver 5. minut
+  workflow_dispatch:
+
+jobs:
+  send-emails:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call send-notification-emails Edge Function
+        run: |
+          curl -sS -X POST "${{ secrets.SUPABASE_FUNCTION_URL }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
