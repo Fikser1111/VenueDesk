@@ -1,20 +1,20 @@
-name: Send notification emails
+name: Send notification emails (cron)
 
 on:
   schedule:
-    - cron: "*/1 * * * *" # hvert minut
-  workflow_dispatch: {}   # manuel test-knap
+    - cron: "*/1 * * * *"
+  workflow_dispatch: {}
 
 jobs:
-  run:
+  send:
     runs-on: ubuntu-latest
     steps:
-      - name: Call Supabase Edge Function
-        run: |
-          curl -sS -X POST "https://gefvtkytwhvwqrgeosxa.supabase.co/functions/v1/send-notification-emails" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
-            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
-            --data "{}"
+      - name: Call Supabase Edge Function (send-notification-emails)
         env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -sS -X POST "$SUPABASE_URL/functions/v1/send-notification-emails" \
+            -H "Authorization: Bearer $SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{ "limit": 50 }'
