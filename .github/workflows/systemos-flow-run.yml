@@ -1,0 +1,21 @@
+name: systemos-flow-run
+
+on:
+  schedule:
+    - cron: "*/1 * * * *"   # hvert minut
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run SystemOS flow
+        env:
+          SYSTEMOS_APP_URL: ${{ secrets.SYSTEMOS_APP_URL }}
+          INBOUND_WEBHOOK_SECRET: ${{ secrets.INBOUND_WEBHOOK_SECRET }}
+          ORG_ID: ${{ secrets.SYSTEMOS_ORG_ID }}
+        run: |
+          curl -sS -X POST "$SYSTEMOS_APP_URL/api/flow/run" \
+            -H "Authorization: Bearer $INBOUND_WEBHOOK_SECRET" \
+            -H "Content-Type: application/json" \
+            -d "{\"org_id\":\"$ORG_ID\",\"limit\":25,\"force\":false}"
